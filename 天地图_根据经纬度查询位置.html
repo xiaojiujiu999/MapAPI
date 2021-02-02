@@ -1,0 +1,60 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="天地图" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        body, html{width: 100%;height: 100%;margin:0;font-family:"微软雅黑";}
+        #allmap{height:500px;width:100%;}
+        #r-result{width:100%; font-size:14px;}
+    </style>
+    <script src="http://api.tianditu.gov.cn/api?v=4.0&tk=d4df644317e9c40de4f04dfd95f3f161" type="text/javascript"></script>
+    <title>根据经纬度查询位置（天地图）</title>
+</head>
+<body>
+    <div id="allmap"></div>
+    <div id="r-result">
+        经度: <input id="longitude" type="text" style="width:100px; margin-right:10px;" />
+        纬度: <input id="latitude" type="text" style="width:100px; margin-right:10px;" />
+        <input onclick="theLocation()" type="button" value="查询"/>
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    // 天地图API功能
+    imageURL = "http://t0.tianditu.gov.cn/img_w/wmts?" +
+        "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles" +
+        "&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}" +
+        "&tk=d4df644317e9c40de4f04dfd95f3f161";
+    imageURLT = "http://t0.tianditu.gov.cn/cia_w/wmts?" +
+        "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cia&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles" +
+        "&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}" +
+        "&tk=d4df644317e9c40de4f04dfd95f3f161";
+    lay = new T.TileLayer(imageURL, { minZoom: 6, maxZoom: 18 });
+    lay2 = new T.TileLayer(imageURLT, { minZoom: 6, maxZoom: 18 });
+    config = { layers: [lay, lay2] };
+
+    var map = new T.Map('allmap', config);
+    //设初始化地图。
+    map.centerAndZoom(new T.LngLat(116.331398,39.897445),11);
+    //允许地图可被鼠标滚轮缩放，默认禁用
+    map.enableScrollWheelZoom(true);
+    //设置地图类型（这样不行）
+    //map.MapType(TMAP_SATELLITE_MAP);
+    //TMAP_NORMAL_MAP	此地图类型展示普通街道视图。
+    //TMAP_SATELLITE_MAP	此地图类型展示卫星视图。
+    //TMAP_HYBRID_Map	此地图类型展示卫星和路网的混合视图。
+    //TMAP_TERRAIN_MAP	此地图类型展示地形视图。
+    //TMAP_TERRAIN_HYBRID_MAP	此地图类型展示地形和路网的混合视图。
+
+    // 用经纬度设置地图中心点
+    function theLocation(){
+        if(document.getElementById("longitude").value != "" && document.getElementById("latitude").value != ""){
+            map.clearOverLays();//清除地图上所有覆盖物
+            var new_Point = new T.LngLat(document.getElementById("longitude").value,document.getElementById("latitude").value);
+            var marker = new T.Marker(new_Point);  // 创建标注
+            map.addOverLay(marker);              // 将标注添加到地图中
+            map.panTo(new_Point);    //将地图的中心点更改为给定的点，跳转到指定中心点进行渲染。
+        }
+    }
+</script>
